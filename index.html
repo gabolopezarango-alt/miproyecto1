@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lunaris — La Forja Ferrosa (Modelo físico completo)</title>
+<meta name="description" content="Lunaris — cuerpo astronómico metálico sólido no diferenciado (Fe/Ni/Cr/Ti/CO). Caracterización física, química y estructural en un documento interactivo." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230b3b3b'/><g fill='%23ffd166'><path d='M50 18 L58 40 L82 40 L62 52 L70 74 L50 60 L30 74 L38 52 L18 40 L42 40 Z' /></g></svg>">
+<style>
+/* ===========================
+   Lunaris - La Forja Ferrosa
+   Single-file modern CSS-first page (complete)
+   =========================== */
+
+:root{
+  --bg1: #070616;
+  --bg2: #081229;
+  --glass: rgba(255,255,255,0.06);
+  --accent-1: #6EE7B7;
+  --accent-2: #68A4FF;
+  --metal1: #c0c5c9;
+  --muted: rgba(255,255,255,0.7);
+  --glass-2: rgba(255,255,255,0.03);
+  --card-shadow: 0 10px 30px rgba(2,10,23,0.6);
+  --glass-border: rgba(255,255,255,0.06);
+  --mono: 'Segoe UI', Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;
+  --accent-grad: linear-gradient(135deg,var(--accent-2),var(--accent-1));
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  position:relative; /* para el pseudo-elemento de fondo */
+  font-family:var(--mono);
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(104,164,255,0.06), transparent 10%),
+    radial-gradient(900px 480px at 90% 90%, rgba(110,231,183,0.03), transparent 10%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
+  color:#e9f1ff;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  padding:32px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:24px;
+}
+
+/* Fondo principal con la imagen de Lunaris */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:url('Esto.png') center/cover no-repeat;
+  opacity:0.32;
+  pointer-events:none;
+  z-index:-1;
+}
+
+/* layout */
+.container{
+  width:1200px; max-width:calc(100% - 48px);
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  gap:24px;
+  align-items:start;
+}
+
+/* left column (sidebar) */
+.sidebar{
+  position:sticky; top:32px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:var(--card-shadow);
+  overflow:hidden;
+  min-height:420px;
+}
+
+.brand{
+  display:flex; gap:12px; align-items:center;
+}
+.logo{
+  width:64px;height:64px;border-radius:14px;flex:0 0 64px;
+  background:var(--accent-grad);
+  display:grid; place-items:center; color:#061028; font-weight:800;
+  box-shadow: 0 6px 18px rgba(6,18,40,0.6), inset 0 -8px 18px rgba(255,255,255,0.06);
+}
+.title{font-size:1.1rem; font-weight:800; letter-spacing:-0.2px}
+.subtitle{font-size:0.78rem; color:var(--muted); margin-top:2px}
+
+/* quick stats */
+.stats{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:16px}
+.stat{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid var(--glass-border);
+  padding:10px;border-radius:12px;
+  text-align:left;
+}
+.stat b{display:block; font-size:1.05rem}
+.stat small{color:var(--muted)}
+
+/* nav */
+.nav{margin-top:16px; display:flex; flex-direction:column; gap:8px}
+a.nav-link{
+  display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit;
+  padding:10px; border-radius:10px; transition:all .26s;
+  font-weight:700; font-size:.95rem;
+}
+a.nav-link:hover{ transform:translateX(6px); color:var(--accent-1) }
+
+/* action */
+.actions{display:flex; gap:8px; margin-top:18px; flex-wrap:wrap}
+.btn{
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid var(--glass-border);
+  color:var(--metal1);
+  padding:8px 12px; border-radius:10px; font-weight:700; font-size:.9rem;
+  cursor:pointer; transition:all .18s; text-align:center;
+}
+.btn.primary{
+  background:var(--accent-grad);
+  color:#061028; border:none; box-shadow:0 8px 24px rgba(68,146,255,0.12);
+}
+
+/* right column (main) */
+.main{
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+  border-radius:18px; padding:24px; box-shadow:var(--card-shadow); border:1px solid var(--glass-border);
+  min-height:520px;
+  position:relative;
+}
+
+/* hero / header */
+.hero{
+  display:flex; gap:18px; align-items:center; margin-bottom:12px;
+}
+.hero .eyebrow{font-size:.78rem; color:var(--muted)}
+.hero h1{margin:0; font-size:1.7rem; line-height:1; letter-spacing:-0.5px}
+.hero p.lead{margin:6px 0 0; color:var(--muted)}
+
+/* right content area: accordion */
+.accordion{
+  margin-top:18px;
+  display:grid;
+  gap:14px;
+}
+
+/* each panel */
+.panel-card{
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,0.03);
+  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.008));
+  box-shadow: 0 8px 30px rgba(8,16,28,0.55);
+}
+.panel-head{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:16px 18px;
+  cursor:pointer;
+}
+.panel-head .left{
+  display:flex; gap:12px; align-items:center;
+}
+.panel-head .title{font-weight:800; font-size:1.05rem}
+.panel-head .subtitle{color:var(--muted); font-size:.88rem}
+
+/* fancy indicator */
+.panel-head .chev{
+  width:44px;height:44px;border-radius:10px; display:grid; place-items:center;
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.03);
+  transition: transform .36s cubic-bezier(.2,.9,.2,1);
+}
+.panel-card.open .panel-head .chev{ transform: rotate(90deg) }
+
+/* content area */
+.panel-body{
+  padding:16px 20px 20px 20px;
+  color:var(--muted);
+  max-height:0;
+  overflow:auto;
+  transition: max-height .6s cubic-bezier(.2,.9,.2,1), padding .25s;
+}
+.panel-card.open .panel-body{
+  max-height:1400px; /* generous */
+}
+
+/* richer content styles */
+h2.section-title{margin:0 0 8px 0; color:#eaf7ff}
+p{line-height:1.55; margin:8px 0}
+ul{margin:8px 0 8px 20px}
+pre.code{
+  background:rgba(3,10,20,0.5); padding:12px; border-radius:10px; overflow:auto; color:#cfeeff;
+  border:1px solid rgba(255,255,255,0.02);
+}
+
+/* code-like block for calculations */
+.calc{
+  background:linear-gradient(180deg, rgba(2,6,10,0.6), rgba(6,10,18,0.4));
+  border-radius:10px;padding:12px;border:1px solid rgba(255,255,255,0.03);
+  color:#d6f3ff; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+}
+
+/* tarjeta para la imagen explicativa */
+.figure-card{
+  margin:4px 0 12px 0;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--glass-border);
+  background:rgba(3,10,20,0.75);
+  box-shadow:var(--card-shadow);
+}
+.figure-card img{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.figure-card figcaption{
+  font-size:.8rem;
+  padding:8px 10px 10px 10px;
+  color:var(--muted);
+}
+
+/* small responsive adjustments */
+@media (max-width:1100px){
+  .container{grid-template-columns:1fr; padding-bottom:60px}
+  .sidebar{position:relative; top:0; width:100%}
+  .main{min-height:640px}
+}
+
+/* subtle animations */
+@keyframes floaty {
+  0% { transform: translateY(0px) }
+  50%{ transform: translateY(-6px) }
+  100%{ transform: translateY(0px) }
+}
+.scoop{ animation: floaty 6s ease-in-out infinite; }
+
+/* footer small */
+.footer{color:var(--muted); font-size:.86rem; margin-top:16px; display:flex; justify-content:space-between; gap:12px; align-items:center}
+</style>
+</head>
+<body>
+  <div class="container" role="main" aria-label="Lunaris - La Forja Ferrosa">
+    <!-- LEFT -->
+    <aside class="sidebar" aria-label="Navegación y resumen">
+      <div class="brand">
+        <div class="logo">L</div>
+        <div>
+          <div class="title">Lunaris</div>
+          <div class="subtitle">La Forja Ferrosa — cuerpo metálico no diferenciado</div>
+        </div>
+      </div>
+
+      <div class="stats" aria-hidden="false">
+        <div class="stat">
+          <small>Tipo de cuerpo</small>
+          <b>Metálico sólido</b>
+        </div>
+        <div class="stat">
+          <small>Densidad estimada</small>
+          <b>6.8–8.2 g/cm³</b>
+        </div>
+        <div class="stat">
+          <small>Temp. cara diurna</small>
+          <b>+180 a +230 °C</b>
+        </div>
+        <div class="stat">
+          <small>Temp. cara nocturna</small>
+          <b>−130 a −200 °C</b>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Navegación principal">
+        <a class="nav-link" href="#overview">📡 Panorama general</a>
+        <a class="nav-link" href="#composicion">🧪 Composición química</a>
+        <a class="nav-link" href="#estructura">🌐 Estructura interna</a>
+        <a class="nav-link" href="#superficie">🪐 Superficie y entorno</a>
+        <a class="nav-link" href="#sintesis">✨ Síntesis general</a>
+      </nav>
+
+      <div class="actions" role="region" aria-label="Acciones principales">
+        <button class="btn primary" id="expandAll">Expandir todo</button>
+        <button class="btn" id="collapseAll">Colapsar todo</button>
+      </div>
+
+      <div style="margin-top:12px; font-size:.9rem; color:var(--muted)">
+        Autor: by Gabriel López Arango<br>
+        Fecha: <b id="today"></b>
+      </div>
+    </aside>
+
+    <!-- RIGHT -->
+    <main class="main" id="overview">
+      <header class="hero">
+        <div>
+          <div class="eyebrow">Modelo físico conceptual / Documento completo</div>
+          <h1>Lunaris — La Forja Ferrosa</h1>
+          <p class="lead">
+            Cuerpo astronómico metálico sólido y no diferenciado, compuesto por una litósfera continua de
+            <strong>Fe 40%</strong>, <strong>Ni 25%</strong>, <strong>Cr 15%</strong>, <strong>Ti 10%</strong>, <strong>CO 10%</strong>.
+            Este documento recoge la caracterización física, química, estructural y superficial de Lunaris, junto con su interacción con el entorno espacial, en un formato interactivo y visual.
+          </p>
+        </div>
+        <div style="margin-left:auto; display:flex; align-items:center; gap:12px">
+          <div style="text-align:right; color:var(--muted)"><small>Versión</small><div style="font-weight:800">Completa • v1.0</div></div>
+        </div>
+      </header>
+
+      <!-- ACCORDION: cada panel contiene la información completa -->
+      <section class="accordion" id="accordion">
+
+        <!-- PANEL 1: Panorama general / Naturaleza -->
+        <article class="panel-card" data-panel="intro">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:var(--accent-grad);display:grid;place-items:center;font-weight:900;color:#061028">L</div>
+              <div>
+                <div class="title">Panorama general</div>
+                <div class="subtitle">Naturaleza del cuerpo metálico y contexto</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <figure class="figure-card">
+              <img src="Esto.png" alt="Representación artística de Lunaris — La Forja Ferrosa" loading="lazy">
+              <figcaption>Ilustración conceptual de Lunaris, cuerpo astronómico metálico sólido sin atmósfera ni diferenciación interna.</figcaption>
+            </figure>
+
+            <h2 class="section-title">Naturaleza del cuerpo</h2>
+            <p><strong>Lunaris</strong> es un cuerpo astronómico metálico, sólido y no diferenciado, que flota libremente en el espacio. Carece por completo de atmósfera, hidrosfera y actividad geológica interna. Todo el objeto está constituido por una única litósfera metálica global, continua y masiva, sin separación en corteza, manto y núcleo al estilo de los planetas terrestres.</p>
+            <p>Desde el punto de vista geológico, el conjunto del cuerpo se comporta como una sola “corteza” metálica rígida.</p>
+
+            <p><strong>Principales razones de la ausencia de diferenciación interna:</strong></p>
+            <ul>
+              <li><strong>Déficit de calor interno:</strong> la energía térmica inicial no fue suficiente para producir fusión parcial sostenida ni corrientes convectivas capaces de reorganizar el interior.</li>
+              <li><strong>Inexistencia de vulcanismo:</strong> al no haber magma ni intrusiones, no se producen procesos de transporte significativo de materiales que generen capas distintas.</li>
+              <li><strong>Ausencia de atmósfera y fluidos:</strong> sin agua ni gases, no se desarrollan procesos erosivos, sedimentarios ni de alteración que construyan nuevas unidades geológicas.</li>
+              <li><strong>Composición íntegramente metálica:</strong> la alta conductividad térmica del sistema Fe–Ni permite que cualquier calor residual se redistribuya y disipe rápidamente, impidiendo la formación de zonas fundidas duraderas.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- PANEL 2: Composición química -->
+        <article class="panel-card" data-panel="assumptions" id="composicion">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#ffd166,#ff9a3c);display:grid;place-items:center;font-weight:900;color:#061028">Σ</div>
+              <div>
+                <div class="title">Composición química global</div>
+                <div class="subtitle">Distribución porcentual de Fe, Ni, Cr, Ti y CO</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Composición química global</h2>
+            <p>La litósfera de Lunaris está compuesta al 100&nbsp;% por una mezcla metálica consolidada con el siguiente reparto aproximado en masa:</p>
+
+            <ul>
+              <li><strong>Hierro (Fe):</strong> 40&nbsp;%</li>
+              <li><strong>Níquel (Ni):</strong> 25&nbsp;%</li>
+              <li><strong>Cromo (Cr):</strong> 15&nbsp;%</li>
+              <li><strong>Titanio (Ti):</strong> 10&nbsp;%</li>
+              <li><strong>Monóxido de carbono (CO):</strong> 10&nbsp;%</li>
+            </ul>
+
+            <p>No se identifican minerales silicatados, agua ni compuestos orgánicos complejos. Desde el punto de vista geoquímico, Lunaris puede describirse como una <strong>masa metálica casi pura</strong>, con CO atrapado en su interior en forma de gas y en forma de carburos metálicos (Fe–C y Ni–C).</p>
+          </div>
+        </article>
+
+        <!-- PANEL 3: Distribución interna -->
+        <article class="panel-card" data-panel="physics" id="estructura">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#9be15d,#00e3ae);display:grid;place-items:center;font-weight:900;color:#061028">∿</div>
+              <div>
+                <div class="title">Distribución interna de los elementos</div>
+                <div class="subtitle">Segregación por enfriamiento y presión gravitacional</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Distribución interna de los elementos</h2>
+            <p>Aunque Lunaris no muestra capas geológicas diferenciadas, sí presenta <strong>gradientes químicos locales</strong> originados por procesos físicos primarios.</p>
+
+            <h3>Segregación por enfriamiento</h3>
+            <p>Durante la etapa inicial de enfriamiento del cuerpo metálico:</p>
+            <ul>
+              <li>El Fe y el Ni cristalizan en estructuras cúbicas centradas en el cuerpo (BCC) y cúbicas centradas en las caras (FCC).</li>
+              <li>El Cr y el Ti se incorporan como impurezas metálicas dentro de estas redes cristalinas, generando una solución sólida compleja.</li>
+              <li>El CO se retiene en forma de gas atrapado en cavidades microscópicas o participa en la formación de carburos Fe–C y Ni–C.</li>
+            </ul>
+
+            <h3>Efecto de la presión gravitacional interna</h3>
+            <p>La presión gravitacional interna, aunque insuficiente para producir un núcleo líquido, sí provoca una ligera segregación composicional:</p>
+            <ul>
+              <li>La región central muestra un aumento relativo de Fe y Ni respecto a las zonas más externas.</li>
+              <li>Disminuye la concentración de CO, porosidad y densidad de fracturas hacia el interior.</li>
+              <li>Los cristales metálicos se hacen más densos y mejor alineados en la zona profunda.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- PANEL 4: Litósfera metálica -->
+        <article class="panel-card" data-panel="conditions">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#68a4ff,#6ee7b7);display:grid;place-items:center;font-weight:900;color:#061028">☼</div>
+              <div>
+                <div class="title">Litósfera metálica global</div>
+                <div class="subtitle">Estado físico, textura cristalina y resistencia</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Litósfera metálica global</h2>
+            <p>La “corteza” de Lunaris es en realidad una <strong>litósfera metálica única</strong> que se extiende desde la superficie hasta el centro del cuerpo.</p>
+
+            <h3>Estado físico</h3>
+            <ul>
+              <li>Sólida en toda su extensión.</li>
+              <li>Sin comportamiento plástico tectónico apreciable.</li>
+              <li>No fluye ni colapsa como harían el hielo o ciertas rocas bajo esfuerzos prolongados.</li>
+            </ul>
+
+            <h3>Textura y estructura cristalina</h3>
+            <ul>
+              <li>Presencia de <strong>patrones tipo Widmanstätten</strong>, característicos de aleaciones Fe–Ni en meteoritos metálicos.</li>
+              <li>Dominios poligonales interconectados, interpretados como “domos” cristalinos metálicos.</li>
+              <li>Red de microfisuras generadas por:
+                <ul>
+                  <li>Contracción y dilatación debidas a los ciclos térmicos extremos entre la cara diurna y la cara nocturna.</li>
+                  <li>Bombardeo continuo de micrometeoritos en ausencia de atmósfera protectora.</li>
+                </ul>
+              </li>
+            </ul>
+
+            <h3>Resistencia mecánica</h3>
+            <ul>
+              <li>Tenacidad elevada y alta resistencia al impacto.</li>
+              <li>Los micrometeoritos generan grietas locales y pequeños cráteres, pero no pulverización masiva del material.</li>
+              <li>La presencia de Cr y Ti mejora la resistencia a la propagación de fracturas y refuerza la integridad estructural a gran escala.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- PANEL 5: Propiedades físicas globales -->
+        <article class="panel-card" data-panel="design">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#ffd166,#68a4ff);display:grid;place-items:center;font-weight:900;color:#061028">⚙</div>
+              <div>
+                <div class="title">Propiedades físicas globales</div>
+                <div class="subtitle">Densidad, conductividad térmica y atmósfera</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Propiedades físicas globales</h2>
+
+            <h3>Densidad</h3>
+            <p>La densidad media de Lunaris se estima en el rango de <strong>6,8–8,2 g/cm³</strong>, comparable a la de meteoritos metálicos férricos tipo IIIAB.</p>
+
+            <h3>Conductividad térmica</h3>
+            <p>La conductividad térmica es muy alta, característica de metales puros y aleaciones ricas en Fe–Ni:</p>
+            <ul>
+              <li>Valor aproximado: <strong>30–60 W·m⁻¹·K⁻¹</strong>.</li>
+              <li>El cuerpo no retiene eficazmente el calor; lo redistribuye y disipa con rapidez a través de toda la masa metálica.</li>
+            </ul>
+
+            <h3>Ausencia de atmósfera</h3>
+            <ul>
+              <li>No existen gases en equilibrio estable sobre la superficie.</li>
+              <li>No hay transporte de calor por convección ni difusión atmosférica.</li>
+              <li>La radiación solar incide directamente sobre el metal expuesto, sin filtrado ni dispersión.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- PANEL 6: Régimen térmico -->
+        <article class="panel-card" data-panel="procedure">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#68a4ff,#6ee7b7);display:grid;place-items:center;font-weight:900;color:#061028">🛠</div>
+              <div>
+                <div class="title">Régimen térmico superficial</div>
+                <div class="subtitle">Contrastes día/noche y tensiones térmicas</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Régimen térmico superficial</h2>
+            <p>La ausencia absoluta de atmósfera produce <strong>contrastes térmicos extremos</strong> entre las zonas iluminadas por el Sol y las regiones en sombra.</p>
+
+            <ul>
+              <li><strong>Cara diurna:</strong> temperaturas típicas en el rango de <strong>+180 °C a +230 °C</strong>.</li>
+              <li><strong>Cara nocturna:</strong> temperaturas en torno a <strong>−130 °C a −200 °C</strong>.</li>
+            </ul>
+
+            <p>No existe una transición suave entre estos límites: el gradiente de temperatura a escala local puede ser muy abrupto. La litósfera metálica se dilata y contrae como una gran pieza de metal expuesto, generando tensiones internas que favorecen la aparición de fisuras y la fatiga térmica.</p>
+          </div>
+        </article>
+
+        <!-- PANEL 7: CO y carburos -->
+        <article class="panel-card" data-panel="experiments">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#ffd166,#9be15d);display:grid;place-items:center;font-weight:900;color:#061028">🔬</div>
+              <div>
+                <div class="title">Monóxido de carbono y carburos</div>
+                <div class="subtitle">CO atrapado, fases de carburo y efectos mecánicos</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Monóxido de carbono y carburos metálicos</h2>
+            <p>El monóxido de carbono presente en Lunaris no forma una atmósfera independiente ni se comporta como un gas libre superficial. En su lugar, se encuentra:</p>
+
+            <ul>
+              <li>Encerrado en <strong>microburbujas internas</strong> dentro de la matriz metálica.</li>
+              <li>Combinado químicamente en forma de <strong>carburos metálicos</strong>, entre ellos:
+                <ul>
+                  <li><strong>Fe₃C</strong> (cementita)</li>
+                  <li><strong>Fe₂₃C₆</strong></li>
+                  <li><strong>Ni₃C</strong></li>
+                </ul>
+              </li>
+            </ul>
+
+            <p>Estas fases de carburo actúan como refuerzo interno, <strong>endureciendo la matriz</strong> y volviendo a Lunaris más rígido y menos fracturable que un meteorito metálico promedio. Como consecuencia, los procesos de rotura tienden a producir grietas localizadas más que fallos catastróficos a gran escala.</p>
+          </div>
+        </article>
+
+        <!-- PANEL 8: Magnetismo -->
+        <article class="panel-card" data-panel="risks">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#ff7b7b,#ffd166);display:grid;place-items:center;font-weight:900;color:#061028">⚠</div>
+              <div>
+                <div class="title">Magnetismo de Lunaris</div>
+                <div class="subtitle">Origen, remanencia y efectos observables</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Magnetismo de Lunaris</h2>
+
+            <h3>Origen</h3>
+            <p>El magnetismo del cuerpo no se debe a una dinamo interna activa, sino a procesos pasivos durante su formación:</p>
+            <ul>
+              <li>Alineación de dominios Fe–Ni durante el enfriamiento lento en presencia de campos magnéticos externos.</li>
+              <li>Adquisición de una <strong>magnetización remanente</strong> en la región del espacio donde se formó o fue procesado.</li>
+            </ul>
+
+            <h3>Tipo de magnetización</h3>
+            <ul>
+              <li>Predomina la <strong>magnetización remanente</strong>, estable en el tiempo mientras no se superen ciertas temperaturas o tensiones.</li>
+              <li>No existe una dinamo metálica interna: no hay núcleo líquido ni convección suficiente para generar un campo magnético autogenerado.</li>
+            </ul>
+
+            <h3>Efectos observables</h3>
+            <ul>
+              <li>Desviación limitada de partículas cargadas de baja energía en las proximidades del cuerpo.</li>
+              <li>Retención preferencial de polvo metálico o ferromagnético en zonas de impacto o fracturas.</li>
+              <li>Posible presencia de dominios magnéticos locales que registran la historia térmica y de campo magnético del entorno original.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- PANEL 9: Superficie y morfología -->
+        <article class="panel-card" data-panel="energy" id="superficie">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#6ee7b7,#68a4ff);display:grid;place-items:center;font-weight:900;color:#061028">⚡</div>
+              <div>
+                <div class="title">Superficie y morfología</div>
+                <div class="subtitle">Cráteres, rególito metálico y erosión espacial</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Superficie y morfología de Lunaris</h2>
+
+            <h3>Rasgos geomorfológicos</h3>
+            <ul>
+              <li>Abundancia de <strong>cráteres pequeños y secos</strong>, con bordes metálicos deformados por fusión localizada y re-solidificación.</li>
+              <li>Cavidades circulares y elípticas causadas por impactos a distintas velocidades y ángulos.</li>
+              <li>Regiones suavizadas y “pulidas” por el bombardeo de micrometeoritos y partículas de alta velocidad.</li>
+            </ul>
+
+            <h3>Erosión espacial</h3>
+            <ul>
+              <li><strong>Sputtering:</strong> el impacto del viento solar arranca átomos de Fe, Cr y Ti de la superficie, modificando lentamente la composición y textura de las capas más externas.</li>
+              <li>Ausencia total de procesos atmosféricos (viento, lluvia, hielo) que remodelen el relieve.</li>
+              <li>Superficie muy antigua que actúa como <strong>archivo geológico externo</strong>, conservando la historia de impactos y exposición a la radiación a lo largo del tiempo.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- PANEL 10: Región central -->
+        <article class="panel-card" data-panel="kpis">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#9be15d,#ffd166);display:grid;place-items:center;font-weight:900;color:#061028">📈</div>
+              <div>
+                <div class="title">Región central (“falso núcleo”)</div>
+                <div class="subtitle">Zona más interna de la litósfera metálica</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Región central (“falso núcleo”)</h2>
+            <p>Desde un punto de vista planetológico estricto, Lunaris <strong>no posee un núcleo planetario clásico</strong>. La llamada “zona central” es simplemente la porción más interna y compacta de la misma litósfera metálica.</p>
+
+            <h3>Composición</h3>
+            <ul>
+              <li>Enriquecimiento progresivo en <strong>Fe</strong> (por encima del 40&nbsp;%).</li>
+              <li>Aumento de la fracción de <strong>Ni</strong> (por encima del 25&nbsp;%).</li>
+              <li>Menor presencia de CO y otras impurezas volátiles.</li>
+            </ul>
+
+            <h3>Estado físico</h3>
+            <ul>
+              <li>Sólido en toda su extensión.</li>
+              <li>Alta compresión debida a la gravedad interna del propio cuerpo.</li>
+              <li>Cristales metálicos más densos, con menor porosidad y mejor alineación.</li>
+            </ul>
+
+            <h3>Propiedades magnéticas y dinámicas</h3>
+            <ul>
+              <li>Región más fácilmente magnetizable del cuerpo, actuando como reservorio de magnetización remanente.</li>
+              <li>Sin convección interna apreciable.</li>
+              <li>Ausencia de núcleo líquido y, por tanto, <strong>ausencia de una dinamo activa</strong>.</li>
+              <li>No se observa rotación diferencial significativa entre el interior y las capas externas.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- PANEL 11: Interacción con el entorno espacial -->
+        <article class="panel-card" data-panel="extras">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#68a4ff,#6ee7b7);display:grid;place-items:center;font-weight:900;color:#061028">✨</div>
+              <div>
+                <div class="title">Interacción con el entorno espacial</div>
+                <div class="subtitle">Radiación, micrometeoritos y archivo geológico</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Interacción con el entorno espacial</h2>
+
+            <h3>Radiación cósmica y solar</h3>
+            <ul>
+              <li>La radiación incide directamente sobre la superficie metálica, produciendo <strong>ionización superficial</strong> y defectos en la red cristalina.</li>
+              <li>Se generan calentamientos puntuales que inducen tensiones térmicas y favorecen la aparición de microfisuras.</li>
+            </ul>
+
+            <h3>Bombardeo de micrometeoritos</h3>
+            <ul>
+              <li>Impactos continuos de partículas producen cráteres microscópicos dispersos por toda la superficie.</li>
+              <li>Formación de fisuras radiales alrededor de los puntos de impacto.</li>
+              <li>Zonas de soldadura por impacto, donde el metal se recalienta y se vuelve a fusionar localmente.</li>
+            </ul>
+
+            <h3>Archivo geológico externo</h3>
+            <ul>
+              <li>En ausencia de atmósfera protectora, <strong>cada partícula</strong> (desde el viento solar hasta fragmentos rocosos milimétricos) interactúa directamente con el metal.</li>
+              <li>La superficie de Lunaris conserva un registro acumulado de impactos, sputtering y modificaciones inducidas por radiación a lo largo de su historia.</li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- PANEL 12: Síntesis general -->
+        <article class="panel-card" data-panel="refs" id="sintesis">
+          <div class="panel-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="left">
+              <div style="width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#b0a0ff,#ffd166);display:grid;place-items:center;font-weight:900;color:#061028">📚</div>
+              <div>
+                <div class="title">Síntesis general</div>
+                <div class="subtitle">Resumen ejecutivo del modelo de Lunaris</div>
+              </div>
+            </div>
+            <div class="chev">▶</div>
+          </div>
+          <div class="panel-body" aria-hidden="true">
+            <h2 class="section-title">Síntesis general del modelo de Lunaris</h2>
+            <p><strong>Lunaris — “La Forja Ferrosa”</strong> es un cuerpo astronómico metálico sólido, no diferenciado, compuesto por una litósfera continua rica en Fe y Ni, con Cr y Ti como elementos de aleación y CO atrapado en forma de microburbujas y carburos metálicos.</p>
+
+            <p>Sus características clave pueden resumirse en los siguientes puntos:</p>
+            <ul>
+              <li><strong>Geología interna simple:</strong> no hay corteza, manto ni núcleo clásicos; todo el cuerpo es una única masa metálica sólida.</li>
+              <li><strong>Alta densidad y conductividad térmica:</strong> similar a la de meteoritos metálicos densos, con una fuerte capacidad para redistribuir calor.</li>
+              <li><strong>Ausencia de atmósfera:</strong> la superficie recibe directamente radiación y micrometeoritos, sin filtros ni amortiguadores.</li>
+              <li><strong>Superficie intensamente craterizada:</strong> conserva un registro casi intacto de impactos y procesos de erosión espacial.</li>
+              <li><strong>Magnetismo remanente:</strong> domina la magnetización “fósil”, sin dinamo activa ni núcleo líquido.</li>
+              <li><strong>Región central compacta:</strong> equivalente a un “falso núcleo”, más rico en Fe–Ni, sólido y altamente magnetizable, pero sin generación de campo magnético propia.</li>
+            </ul>
+
+            <p><em>Nota:</em> Lunaris se presenta aquí como un modelo físico conceptual; los valores numéricos (densidades, temperaturas, rangos de conductividad, etc.) son intervalos plausibles pensados para trabajo académico y pueden ajustarse si se define un escenario más específico.</p>
+
+            <h3>Cómo leer este documento</h3>
+            <p>Este HTML funciona como una ficha científico–técnica interactiva: puedes expandir sólo las secciones necesarias (composición, estructura, magnetismo, superficie, etc.) y utilizar el contenido como base para informes, presentaciones o anexos de proyecto.</p>
+          </div>
+        </article>
+
+      </section>
+
+      <div class="footer">
+        <div>© Lunaris • La Forja Ferrosa</div>
+      </div>
+    </main>
+  </div>
+
+<script>
+/* ---------- Interactividad: acordeón y controles ---------- */
+(function(){
+  document.getElementById('today').textContent = new Date().toLocaleDateString();
+
+  const panels = Array.from(document.querySelectorAll('.panel-card'));
+  const heads = panels.map(p => p.querySelector('.panel-head'));
+
+  heads.forEach((h, idx) => {
+    h.addEventListener('click', ()=> togglePanel(idx) );
+    h.addEventListener('keydown', (e)=> {
+      if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePanel(idx); }
+    });
+  });
+
+  function togglePanel(i){
+    const p = panels[i];
+    const wasOpen = p.classList.contains('open');
+    panels.forEach(x => {
+      x.classList.remove('open');
+      x.querySelector('.panel-head').setAttribute('aria-expanded','false');
+      x.querySelector('.panel-body').setAttribute('aria-hidden','true');
+    });
+    if(!wasOpen){
+      p.classList.add('open');
+      p.querySelector('.panel-head').setAttribute('aria-expanded','true');
+      p.querySelector('.panel-body').setAttribute('aria-hidden','false');
+      setTimeout(()=> { p.scrollIntoView({behavior:'smooth', block:'start'}); }, 220);
+    }
+  }
+
+  document.getElementById('expandAll').addEventListener('click', ()=>{
+    panels.forEach(p => {
+      p.classList.add('open');
+      p.querySelector('.panel-head').setAttribute('aria-expanded','true');
+      p.querySelector('.panel-body').setAttribute('aria-hidden','false');
+    });
+  });
+  document.getElementById('collapseAll').addEventListener('click', ()=>{
+    panels.forEach(p => {
+      p.classList.remove('open');
+      p.querySelector('.panel-head').setAttribute('aria-expanded','false');
+      p.querySelector('.panel-body').setAttribute('aria-hidden','true');
+    });
+  });
+
+  document.querySelectorAll('.nav-link').forEach(a=>{
+    a.addEventListener('click', (ev)=>{
+      ev.preventDefault();
+      const href = a.getAttribute('href').slice(1);
+      if(!href) return;
+      const el = document.getElementById(href);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
